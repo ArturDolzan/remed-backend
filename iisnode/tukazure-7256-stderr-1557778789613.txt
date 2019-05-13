@@ -1,0 +1,10 @@
+(node:7256) [DEP0005] DeprecationWarning: Buffer() is deprecated due to security and usability issues. Please use the Buffer.alloc(), Buffer.allocUnsafe(), or Buffer.from() methods instead.
+Unhandled rejection error: database "remed" does not exist
+    at Connection.parseE (C:\Program Files\iisnode\www\remed-backend\node_modules\pg\lib\connection.js:553:11)
+    at Connection.parseMessage (C:\Program Files\iisnode\www\remed-backend\node_modules\pg\lib\connection.js:378:19)
+    at Socket.<anonymous> (C:\Program Files\iisnode\www\remed-backend\node_modules\pg\lib\connection.js:119:22)
+    at Socket.emit (events.js:196:13)
+    at addChunk (_stream_readable.js:290:12)
+    at readableAddChunk (_stream_readable.js:271:11)
+    at Socket.Readable.push (_stream_readable.js:226:10)
+    at TCP.onStreamRead (internal/stream_base_commons.js:166:17)

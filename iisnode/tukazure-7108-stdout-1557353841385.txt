@@ -1,0 +1,7 @@
+consign v0.1.6 Initialized in C:\Program Files\iisnode\www\tasks-backend
++ .\config\passport.js
++ .\config\middlewares.js
++ .\api\auth.js
++ .\api\task.js
++ .\api\user.js
++ .\config\routes.js
