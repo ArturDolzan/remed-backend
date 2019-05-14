@@ -1,4 +1,5 @@
 const moment = require('moment')
+const Promise = require('bluebird');
 
 module.exports = app => {
     const getTasks = (req, res) => {
@@ -65,7 +66,7 @@ module.exports = app => {
             .catch(err => res.status(400).json(err))
     }
 
-    const updateTaskPhoto = (req, res, photo) => {
+    const updateTaskPhoto = (req, res) => {
 
         app.db('tasks')
             .where({ id: req.params.id, userId: req.user.id })
@@ -93,9 +94,7 @@ module.exports = app => {
                     return res.status(400).send(msg)
                 }
 
-                const photo = req.body
-
-                updateTaskPhoto(req, res, photo)
+                updateTaskPhoto(req, res)
             })
             .catch(err => res.status(400).json(err))
     }
@@ -107,6 +106,67 @@ module.exports = app => {
         .select(app.db.raw(`'data:image/gif;base64,' || encode(photo, 'base64') AS image_url`))        
         .then(task => {
             res.json(task)
+        })
+        .catch(err => res.status(400).json(err))
+
+    }
+
+    const testeTransacao = (req, res) => {
+
+        app.db.transaction(trx => {
+
+            return trx('tasks')
+            .where({id: req.params.id, userId: req.user.id})
+            .update({desc: 'Teste transacao tuka'})
+            .then(task => {
+                
+                console.log('PRIMEIRO')
+
+                return trx('tasks')
+                    .where({id: req.params.id, userId: req.user.id})
+                    .first()
+                    .then(task => {
+                        
+                        console.log(task)
+
+                    })
+
+            })
+
+        })
+        .then(() => {
+            console.log('COMMIT')
+            res.status(200).json('COMMIT')
+        })
+        .catch(err => res.status(400).json(err))
+
+    }
+
+    const testeTransacaoLista = (req, res) => {
+
+        const itens = [
+            { desc: "Tarefa 1", estimateAt: moment().endOf('day').toDate(), doneAt: null, photo: null, userId: req.user.id },
+            { desc: "Tarefa 2", estimateAt: moment().endOf('day').toDate(), doneAt: null, photo: null, userId: req.user.id },
+            { desc: "Tarefa 3", estimateAt: moment().endOf('day').toDate(), doneAt: null, photo: null, userId: req.user.id },
+            { desc: "Tarefa 4", estimateAt: moment().endOf('day').toDate(), doneAt: null, photo: null, userId: req.user.id },
+            { desc: "Tarefa 5", estimateAt: moment().endOf('day').toDate(), doneAt: null, photo: null, userId: req.user.id },
+            { desc: "Tarefa 6", estimateAt: moment().endOf('day').toDate(), doneAt: null, photo: null, userId: req.user.id },
+            { desc: "Tarefa 7", estimateAt: moment().endOf('day').toDate(), doneAt: null, photo: null, userId: req.user.id }
+        ]
+        
+        app.db.transaction(trx => {
+
+            return Promise.map(itens, (item, idx) => {
+                
+                return trx('tasks')
+                .insert(item)
+
+            })
+
+        })
+        .then(() => {
+            console.log('COMMIT')
+            res.status(200).json('COMMIT')
         })
         .catch(err => res.status(400).json(err))
 

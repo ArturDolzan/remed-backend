@@ -14,8 +14,8 @@ app.db = db
 
 const port = process.env.PORT || 3000
 
-/*app.listen(port, () => {
+app.listen(port, () => {
     console.log('Backend do Tuca executando...')
-})*/
+})
 
-app.listen(process.env.PORT);
+//app.listen(process.env.PORT);
