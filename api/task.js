@@ -9,6 +9,8 @@ module.exports = app => {
         app.db('tasks')
             .where({ userId: req.user.id })
             .where('estimateAt', '<=', date)
+            .column('id', 'desc', 'estimateAt', 'doneAt')
+            .select()
             .orderBy('estimateAt')
             .then(tasks => res.json(tasks))
             .catch(err => res.status(400).json(err))
@@ -118,6 +120,7 @@ module.exports = app => {
             return trx('tasks')
             .where({id: req.params.id, userId: req.user.id})
             .update({desc: 'Teste transacao tuka'})
+            .transacting(trx)
             .then(task => {
                 
                 console.log('PRIMEIRO')
@@ -125,6 +128,7 @@ module.exports = app => {
                 return trx('tasks')
                     .where({id: req.params.id, userId: req.user.id})
                     .first()
+                    .transacting(trx)
                     .then(task => {
                         
                         console.log(task)
@@ -132,11 +136,13 @@ module.exports = app => {
                     })
 
             })
+            .then(trx.commit)
+            .catch(trx.rollback)
 
         })
-        .then(() => {
-            console.log('COMMIT')
-            res.status(200).json('COMMIT')
+        .then(() => {            
+            console.log('Transação executada com sucesso!')
+            res.status(200).json('Transação executada com sucesso!')
         })
         .catch(err => res.status(400).json(err))
 
@@ -160,13 +166,16 @@ module.exports = app => {
                 
                 return trx('tasks')
                 .insert(item)
+                .transacting(trx)
 
             })
+            .then(trx.commit)
+            .catch(trx.rollback)
 
         })
         .then(() => {
-            console.log('COMMIT')
-            res.status(200).json('COMMIT')
+            console.log('Transação executada com sucesso!')
+            res.status(200).json('Transação executada com sucesso!')
         })
         .catch(err => res.status(400).json(err))
 

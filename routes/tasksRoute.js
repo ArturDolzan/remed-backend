@@ -1,8 +1,6 @@
-const config = require('./apiUrl')
+const config = require('../config/apiUrl')
 
 module.exports = app => {
-    app.post(`${config.routeProd}/signup`, app.api.user.save)
-    app.post(`${config.routeProd}/signin`, app.api.auth.signin)
 
     app.route(`${config.routeProd}/tasks`)
         .all(app.config.passport.authenticate())
