@@ -102,11 +102,12 @@ module.exports = app => {
     }
 
     const downloadBase64Photo = (req, res) => {
-
+        //'data:image/gif;base64,'
         app.db('tasks')
         .where({id: req.params.id, userId: req.user.id})
-        .select(app.db.raw(`'data:image/gif;base64,' || encode(photo, 'base64') AS image_url`))        
+        .select(app.db.raw(` replace(replace(replace(replace(replace(encode(photo, 'base64'), '\n', ''), '\', ''), ';', ''), ':', ''), ',', '') AS image_url`))        
         .then(task => {
+            
             res.json(task)
         })
         .catch(err => res.status(400).json(err))
